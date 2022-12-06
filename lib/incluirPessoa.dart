@@ -15,6 +15,7 @@ Future<String> IncluirPessoa(String nome) async {
   Map<dynamic, dynamic> data = lista.toJson();
   String body = json.encode(data);
 
+  //API
   var response = await http.post(
       Uri.parse("https://www.slmm.com.br/CTC/insere.php"),
       headers: {"Accept": "application/json"},
@@ -25,6 +26,7 @@ Future<String> IncluirPessoa(String nome) async {
   return response.body;
 }
 
+//Construtor
 class incluirPessoa extends StatefulWidget {
   const incluirPessoa({Key? key}) : super(key: key);
 

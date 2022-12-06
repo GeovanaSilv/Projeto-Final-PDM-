@@ -32,6 +32,7 @@ Future<String> deletePessoa(String nome) async {
   return response.body; //json.decode(response.body);
 }
 
+//Construtor
 class listaEspera extends StatefulWidget {
   const listaEspera({Key? key}) : super(key: key);
 
@@ -39,82 +40,89 @@ class listaEspera extends StatefulWidget {
   State<listaEspera> createState() => _listaEsperaState();
 }
 
+//Construtor
 class _listaEsperaState extends State<listaEspera> {
   late Future<List<CtcLista>> futureData;
+  
+  set id(id) {}
 
-  @override
-  void initState() {
-    super.initState();
-    futureData = mostrarLista();
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "LISTA API",
+@override
+void initState() {
+  super.initState();
+  futureData = mostrarLista();
+}
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "LISTA API",
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            //Botão que redireciona para a parte de incluir pessoa
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const incluirPessoa()));
+            },
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add),
+          IconButton(
+              //Botão que redireciona para o Input do QRCode
               onPressed: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const incluirPessoa()));
+                        builder: (context) => const LinkQRCode()));
               },
-            ),
-            IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LinkQRCode()));
-                },
-                icon: Icon(Icons.qr_code))
-          ],
-          backgroundColor: Colors.deepPurple,
-        ),
-        body: Container(
-          child: FutureBuilder<List<CtcLista>>(
-              future: futureData,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<CtcLista> data = snapshot.data!;
-                  return ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        //color: Color.fromARGB(255, 245, 245, 245),
-                        child: ListTile(
-                          title: Text(data[index].nome),
-                          subtitle: Text(data[index].data),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      var nome = data[index].nome;
-                                      deletePessoa(nome);
-                                      futureData = mostrarLista();
-                                      print(deletePessoa(nome));
-                                    });
-                                  },
-                                  icon: const Icon(Icons.delete),
-                                  color: Color.fromARGB(255, 167, 184, 171))
-                            ],
-                          ),
+              icon: Icon(Icons.qr_code))
+        ],
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: Container(
+        child: FutureBuilder<List<CtcLista>>(
+            future: futureData,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                //Listagem das pessoas
+                List<CtcLista> data = snapshot.data!;
+                return ListView.builder(
+                  itemCount: data.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: ListTile(
+                        title: Text(data[index].nome),
+                        subtitle: Text(data[index].data),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    var nome = data[index].nome;
+                                    deletePessoa(nome);
+                                    futureData = mostrarLista();
+                                    print(deletePessoa(nome));
+                                  });
+                                },
+                                icon: const Icon(Icons.delete),
+                                color: Color.fromARGB(255, 167, 184, 171))
+                          ],
                         ),
-                      );
-                    },
-                  );
-                } else if (snapshot.hasError) {
-                  return Text("${snapshot.error}");
-                }
-                return CircularProgressIndicator();
-              }),
-        ));
+                      ),
+                    );
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              return CircularProgressIndicator();
+            }),
+      )
+    );
   }
 }

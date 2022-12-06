@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qr/qr.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+//Constutor
 class QRCode extends StatefulWidget{
   String str = "oi";
 
@@ -11,6 +11,7 @@ class QRCode extends StatefulWidget{
   State<QRCode> createState() => _qrcodeState();
 }
 
+//Tela onde irá aparecer o QRCode que já contém o link
 class _qrcodeState extends State<QRCode>{
   @override
   Widget build(BuildContext context){
@@ -28,6 +29,7 @@ class _qrcodeState extends State<QRCode>{
                 Navigator.pop(context);
               },
               child: const Text("Voltar")),
+            //Aqui ele converte o link "www.slmm.com.br/CTC/getLista.php" em um QRCode funcional
             QrImage(data :"www.slmm.com.br/CTC/getLista.php",
                     version: QrVersions.auto,
                     size: 200.0,

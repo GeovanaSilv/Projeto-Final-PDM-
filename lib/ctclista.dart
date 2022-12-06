@@ -5,15 +5,18 @@ class CtcLista {
   String nome;
   String data;
 
-  CtcLista(this.nome, this.data);
+//Construtor
+CtcLista(this.nome, this.data);
 
-  Map toJson() => {'nome': nome, 'data': data};
+get id => null;
 
-  factory CtcLista.fromJson(dynamic json) {
-    if (json['data'] == null) json['data'] = "01/01/2022 00:00:00";
+Map toJson() => {'nome': nome, 'data': data};
 
-    return CtcLista(json['nome'] as String, json['data'] as String);
-  }
+factory CtcLista.fromJson(dynamic json) {
+  if (json['data'] == null) json['data'] = "01/01/2022 00:00:00";
+
+  return CtcLista(json['nome'] as String, json['data'] as String);
+}
   @override
   String toString() {
     // TODO: implement toString

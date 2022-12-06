@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qr/qr.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-
+//Construtor
 class tela3 extends StatefulWidget {
 String str ="oi";
 
@@ -12,6 +11,7 @@ String str ="oi";
   State<tela3> createState() => _tela3State();
 }
 
+//Tela que irá conter o 
 class _tela3State extends State<tela3> {
   @override
   Widget build(BuildContext context) {
