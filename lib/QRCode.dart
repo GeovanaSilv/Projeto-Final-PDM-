@@ -28,7 +28,7 @@ class _qrcodeState extends State<QRCode>{
                 Navigator.pop(context);
               },
               child: const Text("Voltar")),
-            QrImage(data :widget.str,
+            QrImage(data :"www.slmm.com.br/CTC/getLista.php",
                     version: QrVersions.auto,
                     size: 200.0,
                     gapless: false,
