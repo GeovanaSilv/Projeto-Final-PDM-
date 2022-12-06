@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:lista_espera/incluirPessoa.dart';
-
-import 'ctcLista.dart';
+import 'package:lista_espera/ctclista.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:lista_espera/LinkQRCode.dart';
 
 // GET --> MOSTRA AS PESSOAS NA LISTA
-Future<List<ctcLista>> mostrarLista() async {
+Future<List<CtcLista>> mostrarLista() async {
   var response =
       await http.get(Uri.parse("https://www.slmm.com.br/CTC/getLista.php"),
           //https://www.slmm.com.br/CTC/ctcApi.php
@@ -16,30 +16,21 @@ Future<List<ctcLista>> mostrarLista() async {
   if (response.statusCode == 200) {
     print(response.body);
     List jsonResponse = json.decode(response.body);
-    return jsonResponse.map((data) => new ctcLista.fromJson(data)).toList();
+    return jsonResponse.map((data) => new CtcLista.fromJson(data)).toList();
   } else {
     throw Exception('Erro inesperado....');
   }
 }
 
-Future<ctcLista> deleteNome(String nome) async {
-  const urlDelete = "http://www.slmm.com.br/CTC/delete.php?id=1/";
-  final http.Response response = await http.delete(
-    Uri.parse('urlDelete/$nome'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-  );
-  if (response.statusCode == 200) {
-    return ctcLista.fromJson(json.decode(response.body));
-  } else {
-    throw Exception('Failed to delete album.');
-  }
-}
-
-// POST --> INCLUI AS PESSOAS
-
 // DELETE --> DELETAR AS PESSOAS
+Future<String> deletePessoa(String nome) async {
+  var response = await http.delete(
+      Uri.parse("https://www.slmm.com.br/CTC/delete.php?nome=$nome"),
+      headers: {"Accept": "application/json"});
+  if (response.statusCode != 200) throw Exception('Erro inesperado...');
+
+  return response.body; //json.decode(response.body);
+}
 
 class listaEspera extends StatefulWidget {
   const listaEspera({Key? key}) : super(key: key);
@@ -49,7 +40,7 @@ class listaEspera extends StatefulWidget {
 }
 
 class _listaEsperaState extends State<listaEspera> {
-  late Future<List<ctcLista>> futureData;
+  late Future<List<CtcLista>> futureData;
 
   @override
   void initState() {
@@ -61,24 +52,36 @@ class _listaEsperaState extends State<listaEspera> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("LISTA API",),
+          title: Text(
+            "LISTA API",
+          ),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const incluirPessoa()));
-
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const incluirPessoa()));
               },
             ),
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LinkQRCode()));
+                },
+                icon: Icon(Icons.qr_code))
           ],
           backgroundColor: Colors.deepPurple,
         ),
         body: Container(
-          child: FutureBuilder<List<ctcLista>>(
+          child: FutureBuilder<List<CtcLista>>(
               future: futureData,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  List<ctcLista> data = snapshot.data!;
+                  List<CtcLista> data = snapshot.data!;
                   return ListView.builder(
                     itemCount: data.length,
                     itemBuilder: (BuildContext context, int index) {
@@ -92,10 +95,15 @@ class _listaEsperaState extends State<listaEspera> {
                             children: [
                               IconButton(
                                   onPressed: () {
-                                    print("entra no delete");
+                                    setState(() {
+                                      var nome = data[index].nome;
+                                      deletePessoa(nome);
+                                      futureData = mostrarLista();
+                                      print(deletePessoa(nome));
+                                    });
                                   },
                                   icon: const Icon(Icons.delete),
-                                  color: Colors.red)
+                                  color: Color.fromARGB(255, 167, 184, 171))
                             ],
                           ),
                         ),
